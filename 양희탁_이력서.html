@@ -608,6 +608,12 @@
         </svg>
         인쇄 / PDF 저장
       </button>
+      <button class="print-btn" onclick="downloadSummary()" style="margin-top:6px;">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M8 1v10M4 7l4 4 4-4M2 14h12"/>
+        </svg>
+        요약본 PDF 다운로드
+      </button>
     </div>
   </div>
 
@@ -639,6 +645,26 @@ let currentView = 'summary';
 function loadData() {
   DATA = window._INLINE_DATA;
   render();
+}
+
+// 좌측 하단 — 이력서 PDF 다운로드 (통합본: 이력서+경력기술서+자기소개서)
+function downloadSummary() {
+  const p = (DATA && DATA.profile) || {};
+  const base = (p.export_basename || p.name || '이력서').trim();
+  const filename = `${base}_이력서.pdf`;
+  const encoded = encodeURIComponent(filename);
+  // file:// 모드(단일 HTML 더블클릭): 같은 폴더 상대경로
+  // http(s) 모드(미리보기 서버): origin 기반 절대경로
+  const url = (location.protocol === 'file:')
+    ? './' + encoded
+    : location.origin + '/' + encoded;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 // ── 렌더러 ──────────────────────────────────
